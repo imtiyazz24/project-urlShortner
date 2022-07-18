@@ -1,9 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const shorturlController = require("../controllers/urlController")
+const { createShortUrl, getShortUrl } = require("../controllers/urlController")
 
+//--Create short URL
+router.post("/url/shorten", createShortUrl)
 
-router.post("/url/shorten",shorturlController.shortUrl)
-router.get("/functionup/collegeDetails",shorturlController.fetchUrl)
+//--Get short URL
+router.get("/:urlCode", getShortUrl)
 
-module.exports = router;  // --> exported
+// -No Page Found
+router.all('*', (req, res) => { res.status(404).send({ status: false, message: "No Page Found !!" }) })
+
+module.exports = router

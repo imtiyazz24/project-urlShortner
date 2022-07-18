@@ -1,35 +1,25 @@
 const mongoose = require('mongoose')
 
-const UrlSchema = new mongoose.Schema({
+const urlSchema = new mongoose.Schema(
+    {
+        urlCode:{
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim:true
+        },
+        longUrl:{
+            type :String,
+            required: true,
+        },
+        shortUrl:{
+            type:String,
+            lowercase: true,
+            unique: true,
+        }
 
-     urlcode:   
-     {                        
-         type:String,               //example: iith 
-         unique:true,
-         required:true,
-         trim:true,
-         lowercase: true
+    },{timestamps:true}
+);
 
-     },
-
-    longUrl:  
-     {
-         type:String,               //example: `Indian Institute of Technology, Hyderabad`
-         required:true,
-         trim:true
-
-     },
-
-     shortUrl:
-     {
-        type:String,
-        required:true,
-        unique : true,
-        trim:true
-     }
-
-    },{timestamps:true})
-
-    module.exports = mongoose.model("URL",UrlSchema)
-    
-       
+module.exports = mongoose.model('Url',urlSchema)  // urls
