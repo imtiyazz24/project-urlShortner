@@ -3,7 +3,6 @@ const validUrl = require('valid-url');
 const shortid = require('shortid');
 
 
-
 const createShortUrl= async function(req,res){
     try{
           //==defining baseUrl==//
@@ -13,17 +12,22 @@ const createShortUrl= async function(req,res){
          if(Object.keys(req.body).length==0) return res.status(400).send({status: false, message: "Invalid request, please provide details"})
 
            //==validating long url==//
-        let longUrl=req.body
+        let data=req.body
+        if(!validUrl.isUri(data.longUrl))  return res.status(400).send({status:false, msg:"Enter valid url"})
       //  if (!validUrl(longUrl)) return res.status(400).send({status: false, message: "Invalid long URL"})
+        let findUrl = await urlModel.findOne({longUrl:data.longUrl}).select({__v:0,updatedAt:0,createdAt:0,_id:0})
+        if(findUrl) return res.status(200).send({status:true, data:findUrl})
 
-        let urlCode = shortid.generate()
+        let urlCode = shortid.generate().toLowerCase()      
         let shortUrl = baseUrl + '/' + urlCode
-        longUrl.urlCode = urlCode
-        longUrl.shortUrl = shortUrl
+        data.urlCode = urlCode
+        data.shortUrl = shortUrl
 
-        const urlCreate = await urlModel.create(longUrl)
+
+        const urlCreate = await urlModel.create(data)
+        const response =await urlModel.findOne({urlCreate}).select({__v:0,updatedAt:0,createdAt:0,_id:0})
        
-       return res.status(201).send({status: true, data : {longUrl:urlCreate.longUrl,urlCode:urlCreate.urlCode,shortUrl:urlCreate.shortUrl} })
+       return res.status(201).send({status: true, data :response})
     }catch (err) {
         return res.status(500).send({ status: false, error: err.message })
     }
@@ -32,12 +36,11 @@ const createShortUrl= async function(req,res){
 
 const getShortUrl = async function (req, res) {
     try { 
-       
-       
-        const urlData = await urlModel.findOne({ urlCode: req.params.urlCode })  
+        const code = req.params.urlCode
+        const urlData = await urlModel.findOne({ urlCode: code})  
         if (!urlData)  
             return res.status(404).send({status: false, message: "No URL Found "});
-        return res.status(307).redirect(urlData.longUrl)    
+        return res.status(302).redirect(urlData.longUrl)    
     }
     catch (error) {
         res.status(500).send({ status: false, error: error.message });
