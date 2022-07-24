@@ -1,5 +1,5 @@
 {
-  "name": "projecturlshortnergroup26",
+  "name": "projecturlshortner",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js"
   },
-  "author": "Manish",
+  "author": "Imtiyaz",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.1",
